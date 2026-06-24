@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f0f0f">
+<title>The Daily Flow — W22</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#0f0f0f">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#0f0f0f"/>
+    <rect x="20" y="20" width="160" height="160" rx="12" fill="#1a1a1a" stroke="#c8a96e" stroke-width="2"/>
+    <rect x="30" y="30" width="140" height="25" rx="6" fill="#c8a96e" opacity="0.2"/>
+    <circle cx="50" cy="75" r="8" fill="#c8a96e"/>
+    <rect x="65" y="70" width="85" height="12" rx="4" fill="#7fb069"/>
+    <circle cx="50" cy="110" r="8" fill="#7fb069"/>
+    <rect x="65" y="105" width="85" height="12" rx="4" fill="#e07a5f"/>
+    <circle cx="50" cy="145" r="8" fill="#e07a5f"/>
+    <rect x="65" y="140" width="85" height="12" rx="4" fill="#c8a96e"/>
+  </svg>
+</template>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --accent: #c8a96e;
+    --accent2: #7fb069;
+    --accent3: #e07a5f;
+    --text: #e8e4dc;
+    --soft: #888;
+    --tab-active: #c8a96e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Georgia', serif; font-size: 15px; line-height: 1.6; min-height: 100vh; }
+  
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 16px; position: sticky; top: 0; z-index: 100; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .logo { font-size: 20px; letter-spacing: 0.04em; color: var(--accent); }
+  .logo em { font-style: italic; color: var(--text); }
+  .week-badge { font-size: 11px; color: var(--soft); letter-spacing: 0.08em; text-transform: uppercase; }
+  .progress-bar { height: 2px; background: var(--border); border-radius: 2px; margin-bottom: 4px; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+  .progress-label { font-size: 11px; color: var(--soft); text-align: right; }
+
+  nav { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; border-top: 1px solid var(--border); }
+  nav::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; padding: 10px 12px; font-size: 12px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--soft); white-space: nowrap; background: none; border: none; font-family: inherit; transition: all 0.2s; }
+  .tab.active { color: var(--tab-active); border-bottom-color: var(--tab-active); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  .section { display: none; padding: 16px; max-width: 680px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .week-banner { background: linear-gradient(135deg, #1e1a14 0%, #1a1e14 100%); border: 1px solid #3a3020; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+  .week-banner h2 { font-size: 16px; color: var(--accent); margin-bottom: 4px; letter-spacing: 0.03em; }
+  .week-banner p { font-size: 13px; color: var(--soft); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .card-title { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .card p { font-size: 14px; color: var(--text); margin-bottom: 8px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .alert { background: var(--surface2); border-left: 3px solid var(--accent3); padding: 12px; border-radius: 4px; font-size: 13px; color: var(--text); margin-bottom: 12px; }
+  .alert.alert-green { border-left-color: var(--accent2); }
+
+  .pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .pillar { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+  .pillar-icon { font-size: 18px; margin-bottom: 4px; }
+  .pillar-label { font-size: 12px; font-weight: bold; color: var(--accent); margin-bottom: 3px; }
+  .pillar-desc { font-size: 11px; color: var(--soft); line-height: 1.4; }
+
+  .rule-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-num { flex-shrink: 0; width: 24px; height: 24px; background: var(--surface2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--accent); }
+  .rule-content { flex: 1; }
+  .rule-title { font-size: 13px; font-weight: bold; color: var(--text); }
+  .rule-desc { font-size: 12px; color: var(--soft); margin-top: 2px; }
+
+  .flow-section { margin-bottom: 16px; }
+  .flow-section-title { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+  .capture-area { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; color: var(--text); padding: 10px; font-family: inherit; font-size: 13px; line-height: 1.5; min-height: 70px; margin-bottom: 6px; }
+  .capture-area::placeholder { color: var(--soft); }
+  .add-btn, .save-btn, .reset-btn { background: var(--surface2); color: var(--accent); border: 1px solid var(--border); padding: 8px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .add-btn:hover, .save-btn:hover { background: var(--accent); color: #000; }
+  .reset-btn { color: var(--soft); }
+  .reset-btn:hover { background: var(--surface2); border-color: var(--accent3); color: var(--accent3); }
+
+  .empty-state { font-size: 12px; color: var(--soft); font-style: italic; padding: 8px 0; }
+  .log-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 10px; margin-bottom: 8px; font-size: 13px; }
+  .log-item-content { color: var(--text); }
+  .log-item-time { font-size: 11px; color: var(--soft); margin-top: 4px; }
+
+  .supp-window { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  .supp-window-header { padding: 12px 14px; background: var(--surface2); border-bottom: 1px solid var(--border); }
+  .supp-window-title { font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); font-weight: bold; }
+  .supp-window-sub { font-size: 11px; color: var(--soft); margin-top: 1px; }
+  .supp-window-body { padding: 12px 14px; }
+
+  .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type=checkbox] { margin-top: 2px; accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .check-item label { font-size: 13px; cursor: pointer; line-height: 1.4; }
+  .check-item.done label { color: var(--soft); text-decoration: line-through; }
+  .check-note { font-size: 11px; color: var(--soft); display: block; margin-top: 2px; }
+
+  .protocol-step { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .protocol-step:last-child { border-bottom: none; }
+  .step-num { flex-shrink: 0; width: 24px; height: 24px; background: var(--surface2); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--accent); }
+  .step-content { flex: 1; }
+  .step-name { font-size: 13px; font-weight: bold; color: var(--text); }
+  .step-note { font-size: 11px; color: var(--soft); margin-top: 2px; }
+
+  .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .day-header { padding: 12px 14px; background: var(--surface2); border-bottom: 1px solid var(--border); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .day-name { font-size: 13px; color: var(--accent); font-weight: bold; }
+  .day-meta { font-size: 11px; color: var(--soft); }
+  .day-arrow { color: var(--soft); font-size: 12px; transition: transform 0.2s; }
+  .day-body { padding: 12px 14px; display: none; }
+  .day-body.open { display: block; }
+
+  .meal-slot { margin-bottom: 14px; }
+  .meal-slot:last-child { margin-bottom: 0; }
+  .meal-label { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent2); margin-bottom: 6px; }
+  .meal-item { display: flex; gap: 8px; padding: 5px 0; }
+  .meal-item input[type=checkbox] { margin-top: 3px; accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+  .meal-item label { font-size: 13px; cursor: pointer; line-height: 1.4; }
+  .meal-item.done label { color: var(--soft); text-decoration: line-through; }
+
+  .exercise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+  .ex-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .ex-label { font-size: 12px; font-weight: bold; color: var(--accent2); }
+  .ex-input { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 4px; border-radius: 2px; font-size: 12px; }
+  .ex-unit { font-size: 10px; color: var(--soft); }
+
+  .mbf-step { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .mbf-step:last-child { border-bottom: none; }
+  .mbf-step-num { flex-shrink: 0; width: 22px; height: 22px; background: var(--surface2); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: var(--accent); }
+  .mbf-step-name { flex: 1; font-size: 13px; color: var(--text); }
+
+  @media (max-width: 600px) {
+    .pillars { grid-template-columns: 1fr; }
+    .exercise-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">The Daily Flow <em>W22</em></div>
+    <div class="week-badge">Jun 22–28 · Las Vegas Final Push</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="main-progress"></div></div>
+  <div class="progress-label" id="progress-label">0 / 0 · Ready</div>
+  <nav>
+    <button class="tab active" onclick="showTab(event, 'daily')">🌅 Daily Flow</button>
+    <button class="tab" onclick="showTab(event, 'accountability')">📋 Accountability</button>
+    <button class="tab" onclick="showTab(event, 'supplements')">💊 Supplements</button>
+    <button class="tab" onclick="showTab(event, 'meals')">🥗 Meal Plan</button>
+    <button class="tab" onclick="showTab(event, 'exercise')">🏋️ Exercise</button>
+    <button class="tab" onclick="showTab(event, 'oral')">🦷 Oral Care</button>
+    <button class="tab" onclick="showTab(event, 'mbf')">🧘 Mind · Body · Facial</button>
+    <button class="tab" onclick="showTab(event, 'movement')">📦 Movement</button>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ DAILY FLOW TAB -->
+<section class="section active" id="tab-daily">
+
+  <div class="week-banner">
+    <h2>Week 22 · Jun 22–28 · Muscle Retention + AMPK Activation</h2>
+    <p>179g daily protein (2.0g/kg) · 1,574 kcal · Protein rotation · AMPK framework deployed · Menopause muscle preservation priority</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⭐ Week 22 Cellular Pillars</div>
+    <div class="pillars">
+      <div class="pillar"><div class="pillar-icon">🔄</div><div class="pillar-label">Batch Cook Strategy</div><div class="pillar-desc">Boil potatoes · cook lentils · portion rotisserie chicken Sunday. Zero cooking Mon–Fri.</div></div>
+      <div class="pillar"><div class="pillar-icon">💪</div><div class="pillar-label">179g Protein Daily</div><div class="pillar-desc">Per Bryan Johnson menopause protocol (2.0g/kg). Prevents muscle catabolism during deficit. Supports neurotransmitter stability.</div></div>
+      <div class="pillar"><div class="pillar-icon">🍗</div><div class="pillar-label">Rotisserie Chicken Focus</div><div class="pillar-desc">Fresh Mon–Tue. Deli counter pull. Then rotating canned proteins Wed–Sat.</div></div>
+      <div class="pillar"><div class="pillar-icon">🥔</div><div class="pillar-label">Gold Potatoes Ready</div><div class="pillar-desc">Batch-boiled. Pre-portioned. Grab and use. No starch decisions this week.</div></div>
+      <div class="pillar"><div class="pillar-icon">🛡️</div><div class="pillar-label">Simple Prep Only</div><div class="pillar-desc">You're packing. Meals assemble, not cook. Fallback: deli counter or Panera.</div></div>
+      <div class="pillar"><div class="pillar-icon">☕</div><div class="pillar-label">Daily MCT Latte Anchor</div><div class="pillar-desc">Every morning. 154 cal · 12.3g protein. Non-negotiable breakfast foundation.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚡ Momentum Rules — 5 Non-Negotiables</div>
+    <div class="rule-item"><div class="rule-num">1</div><div class="rule-content"><div class="rule-title">Spicy Cinnamon MCT Collagen Almond Latte — every morning</div><div class="rule-desc">Full recipe · espresso + collagen + MCT + almond milk · non-negotiable breakfast anchor.</div></div></div>
+    <div class="rule-item"><div class="rule-num">2</div><div class="rule-content"><div class="rule-title">Batch-cooked items ready Sunday</div><div class="rule-desc">Gold potatoes boiled · pink lentils cooked · rotisserie chicken portioned. Deploy Mon–Fri with zero cooking.</div></div></div>
+    <div class="rule-item"><div class="rule-num">3</div><div class="rule-content"><div class="rule-title">179g protein every day</div><div class="rule-desc">Bryan Johnson menopausal protocol (2.0g/kg). Prevents muscle breakdown during deficit. Supports dopamine + serotonin + AMPK activation.</div></div></div>
+    <div class="rule-item"><div class="rule-num">4</div><div class="rule-content"><div class="rule-title">LMNT before noon</div><div class="rule-desc">1/8 tsp in 8oz water. Don't exceed. Electrolyte base supports hydration + retention during move.</div></div></div>
+    <div class="rule-item"><div class="rule-num">5</div><div class="rule-content"><div class="rule-title">Calcium Citrate split-dose protocol</div><div class="rule-desc">0.75 tsp at lunch · 0.75 tsp at dinner. Bone health non-negotiable during stress week.</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 Top 3 Priorities Today</div>
+    <div id="priorities-section" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; gap: 8px; align-items: flex-start;">
+        <div style="font-weight: 600; color: var(--accent); min-width: 24px; padding-top: 6px;">1.</div>
+        <input type="text" id="priority-1" class="priority-input" placeholder="First priority — what moves the needle today" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); font-size: 14px; color: var(--text);" />
+      </div>
+      <div style="display: flex; gap: 8px; align-items: flex-start;">
+        <div style="font-weight: 600; color: var(--accent); min-width: 24px; padding-top: 6px;">2.</div>
+        <input type="text" id="priority-2" class="priority-input" placeholder="Second priority" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); font-size: 14px; color: var(--text);" />
+      </div>
+      <div style="display: flex; gap: 8px; align-items: flex-start;">
+        <div style="font-weight: 600; color: var(--accent); min-width: 24px; padding-top: 6px;">3.</div>
+        <input type="text" id="priority-3" class="priority-input" placeholder="Third priority" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); font-size: 14px; color: var(--text);" />
+      </div>
+      <button class="reset-btn" onclick="resetPriorities()" style="align-self: flex-start; margin-top: 4px;">↺ Reset Daily</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔄 SUNDAY BATCH COOK (Today)</div>
+    <p style="font-size:14px; color:var(--soft); margin-bottom:10px;"><strong>Execute in this order. Total active time: ~30–40 min.</strong></p>
+    <p style="font-size:13px; color:var(--text);"><strong>1. Gold Potatoes:</strong> Boil full bag (~10 medium, 2.5 lbs) in salted water 15–18 min. Cool. Portion into 10 containers (1 medium = ~95 cal, 2g protein). Use Mon–Sun.</p>
+    <p style="font-size:13px; color:var(--text); margin-top:8px;"><strong>2. Pink Lentils:</strong> 1 cup dry + 2.5 cups water. Boil, reduce to simmer, 18–20 min until creamy. Cool. Portion into 4 containers (~1 cup each = 200 cal, 13g protein). Use throughout week.</p>
+    <p style="font-size:13px; color:var(--text); margin-top:8px;"><strong>3. Rotisserie Chicken:</strong> Pull from deli counter today. Discard skin. Portion into 4 oz containers (~35g protein, 160 cal each). Use fresh Mon–Tue. Freeze remainder.</p>
+    <p style="font-size:13px; color:var(--accent2); margin-top:10px;"><strong>Result:</strong> All three items ready to grab & assemble. Zero cooking Mon–Fri.</p>
+  </div>
+
+  <div class="flow-section">
+    <div class="flow-section-title">⚡ Interruptions → Defer</div>
+    <div id="interrupt-list"><div class="empty-state">Nothing logged yet.</div></div>
+    <textarea class="capture-area" id="interrupt-input" placeholder="Things pulling you off course during the move — logged, not lost."></textarea>
+    <button class="add-btn" onclick="addLog('interrupt')">+ Log</button>
+  </div>
+
+  <div class="flow-section">
+    <div class="flow-section-title">⏳ Not Now. Not Forgotten.</div>
+    <div id="defer-list"><div class="empty-state">Nothing deferred yet.</div></div>
+    <textarea class="capture-area" id="defer-input" placeholder="Park it here. Deal with it when settled."></textarea>
+    <button class="add-btn" onclick="addLog('defer')">+ Defer</button>
+  </div>
+
+  <div class="flow-section">
+    <div class="flow-section-title">✎ Notes</div>
+    <div id="notes-list"><div class="empty-state">No notes yet.</div></div>
+    <textarea class="capture-area" id="notes-input" placeholder="Anything worth capturing this week."></textarea>
+    <button class="add-btn" onclick="addLog('notes')">+ Add</button>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ ACCOUNTABILITY TAB -->
+<section class="section" id="tab-accountability">
+
+  <div class="week-banner">
+    <h2>🎯 The Daily Flow — Strategic Blueprint</h2>
+    <p>11 PM – 7 AM sleep · 7–11:30 PM second wind window · 8 strategic blocks · Execution roadmap</p>
+  </div>
+
+  <!-- BIG THREE PRIORITIES (Top-level execution targets) -->
+  <div class="card" style="border-left: 5px solid #4A6B82; background: #ffffff; border: 1px solid #e0e0e0;">
+    <div class="card-title" style="color: #2d3748;">🔥 The Big Three — What Gets Done Today</div>
+    <p style="font-size: 12px; color: #666; margin-bottom: 12px;">If nothing else happens, these three execute. Anchor your entire day around these.</p>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="check-item" onclick="toggleCheck(this)" style="background: #f9f9f9; border-left: 3px solid #8FBC8F; padding: 10px; border-radius: 4px; border-bottom: 1px solid #e0e0e0;">
+        <input type="checkbox" data-store="w22_acct" />
+        <input type="text" placeholder="Priority #1" style="flex: 1; background: transparent; border: none; color: #2d3748; font-size: 13px;" />
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="background: #f9f9f9; border-left: 3px solid #A4C2D7; padding: 10px; border-radius: 4px; border-bottom: 1px solid #e0e0e0;">
+        <input type="checkbox" data-store="w22_acct" />
+        <input type="text" placeholder="Priority #2" style="flex: 1; background: transparent; border: none; color: #2d3748; font-size: 13px;" />
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="background: #f9f9f9; border-left: 3px solid #E6A192; padding: 10px; border-radius: 4px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <input type="text" placeholder="Priority #3" style="flex: 1; background: transparent; border: none; color: #2d3748; font-size: 13px;" />
+      </div>
+    </div>
+  </div>
+
+  <!-- TIME BLOCKS (8 strategic blocks) -->
+  <div class="card" style="background: #ffffff; border: 1px solid #e0e0e0;">
+    <div class="card-title" style="color: #2d3748;">⏰ Daily Strategic Blocks — 8 Focus Windows</div>
+    <p style="font-size: 12px; color: #666; margin-bottom: 16px;">All blocks visible at once. Check off as you complete. Timers built-in for 45-min & 50-min sprints.</p>
+
+    <!-- Block 1: The Kickstart -->
+    <div style="border-left: 5px solid #8FBC8F; background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">🌅 07:00 AM – 08:30 AM · The Kickstart & Movement Link</div>
+        <button class="add-btn" onclick="startTimer(45)" style="padding: 4px 8px; font-size: 11px; background: #8FBC8F; color: #fff; border: none;">⏱ 45m</button>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">Wake · weigh-in · supplements · water. Complete 7 fundamental movements (Hinge, Lunge, Push, Pull, Carry, Rotate). No screens. No business emails.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: #4A6B82; font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Wake & weigh-in</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Supplements + water</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Hinge</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Lunge</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Push</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Pull</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Carry</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Rotate</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 2: Deep Work -->
+    <div style="border-left: 5px solid #A4C2D7; background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">📦 08:30 AM – 12:30 PM · Deep Work Block: The Move</div>
+        <button class="add-btn" onclick="startTimer(45)" style="padding: 4px 8px; font-size: 11px; background: #A4C2D7; color: #fff; border: none;">⏱ 45m</button>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">Focus on Dublin relocation · packing office, then closet. 45-min timer with 10–15 squats per sprint. One box per sprint checkpoint.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: #4A6B82; font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Sprint 1: Office desk + top drawers</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">10–15 squats + 1 box</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Sprint 2: Office secondary items</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">10–15 squats + 1 box</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Sprint 3: Closet clothing & accessories</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">10–15 squats + 1 box</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 3: Nutrition -->
+    <div style="border-left: 5px solid #E6A192; background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">🍽️ 12:30 PM – 01:30 PM · Nutrition & Reset Window</div>
+        <button class="add-btn" onclick="startTimer(30)" style="padding: 4px 8px; font-size: 11px; background: #E6A192; color: #fff; border: none;">⏱ 30m</button>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">First meal (breaking fasting window) · hit 1300–1500 kcal target. Update Meal Plan & Supplement tabs.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: #4A6B82; font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Prepare first meal (12:30–1:00 PM)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Log macros (target: 1300–1500 kcal)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Update Meal Plan tab</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Update Supplements tab</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 4: Business Growth -->
+    <div style="border-left: 5px solid #BDB2CF; background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">🚀 01:30 PM – 05:30 PM · Business Growth Block</div>
+        <button class="add-btn" onclick="startTimer(50)" style="padding: 4px 8px; font-size: 11px; background: #BDB2CF; color: #fff; border: none;">⏱ 50m</button>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">Digital marketing business building · high-value asset creation (Ballen/Anderson models). 50-min sprints. Block distracting sites.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: #4A6B82; font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Sprint 1: Focus work (50m)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Sprint 2: Focus work (50m)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Sprint 3: Focus work (50m)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Sprint 4: Focus work (50m)</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 5: Packing Wrap-Up -->
+    <div style="border-left: 5px solid #E6A192; background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">🔧 05:30 PM – 07:00 PM · Final Packing & Dinner</div>
+        <button class="add-btn" onclick="startTimer(45)" style="padding: 4px 8px; font-size: 11px; background: #E6A192; color: #fff; border: none;">⏱ 45m</button>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">Final packing sweep (Bathroom/Garage). Final meal before 7:00 PM fasting window closes.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: #4A6B82; font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Bathroom: pull items, pack</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Garage: final sweep</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Final meal (before 7:00 PM)</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 6: Buffer & Transition -->
+    <div style="border-left: 5px solid #E2E8F0; background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">⏳ 07:00 PM – 09:00 PM · Buffer & Transition Zone</div>
+        <span style="font-size: 11px; color: #999;">No timer · white space</span>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">White space. Relax, read, or low-dopamine tasks. Prevents transition shock that triggers anxiety.</div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 7: Structured Hyperfocus -->
+    <div style="border-left: 5px solid #4A6B82; background: #f9f9f9; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">💻 09:00 PM – 10:30 PM · Structured Hyperfocus Window</div>
+        <button class="add-btn" onclick="startTimer(90)" style="padding: 4px 8px; font-size: 11px; background: #4A6B82; color: #fff; border: none;">⏱ 90m</button>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">Capitalize on natural "second wind." Check & tweak macros for tomorrow (1300 kcal target). App conceptualization/coding for monetization strategy.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: #4A6B82; font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Macro review & optimization for tomorrow</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px; border-bottom: 1px solid #e0e0e0;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">Track data variations</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label style="color: #2d3748;">App development / monetization work</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 8: Shutdown Protocol -->
+    <div style="border-left: 5px solid #E2E8F0; background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: #2d3748;">🌙 10:30 PM – 11:00 PM · The Shutdown Protocol</div>
+        <span style="font-size: 11px; color: #999;">30m wind-down</span>
+      </div>
+      <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">Total digital shutdown. Screen filters on. Prepare environment for 11:00 PM sleep target.</div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px; border-bottom: none;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold; color: #2d3748;">✓ Block Complete & Asleep by 11 PM</label>
+      </div>
+    </div>
+
+  </div>
+
+    <!-- Block 1: The Kickstart -->
+    <div style="border-left: 5px solid #8FBC8F; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">🌅 07:00 AM – 08:30 AM · The Kickstart & Movement Link</div>
+        <button class="add-btn" onclick="startTimer(45)" style="padding: 4px 8px; font-size: 11px;">⏱ 45m</button>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">Wake · weigh-in · supplements · water. Complete 7 fundamental movements (Hinge, Lunge, Push, Pull, Carry, Rotate). No screens. No business emails.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: var(--accent); font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid var(--border);">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Wake & weigh-in</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Supplements + water</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Hinge</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Lunge</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Push</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Pull</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Carry</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Rotate</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 2: Deep Work -->
+    <div style="border-left: 5px solid #A4C2D7; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">📦 08:30 AM – 12:30 PM · Deep Work Block: The Move</div>
+        <button class="add-btn" onclick="startTimer(45)" style="padding: 4px 8px; font-size: 11px;">⏱ 45m</button>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">Focus on Dublin relocation · packing office, then closet. 45-min timer with 10–15 squats per sprint. One box per sprint checkpoint.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: var(--accent); font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid var(--border);">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Sprint 1: Office desk + top drawers</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>10–15 squats + 1 box</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Sprint 2: Office secondary items</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>10–15 squats + 1 box</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Sprint 3: Closet clothing & accessories</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>10–15 squats + 1 box</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 3: Nutrition -->
+    <div style="border-left: 5px solid #E6A192; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">🍽️ 12:30 PM – 01:30 PM · Nutrition & Reset Window</div>
+        <button class="add-btn" onclick="startTimer(30)" style="padding: 4px 8px; font-size: 11px;">⏱ 30m</button>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">First meal (breaking fasting window) · hit 1300–1500 kcal target. Update Meal Plan & Supplement tabs.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: var(--accent); font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid var(--border);">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Prepare first meal (12:30–1:00 PM)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Log macros (target: 1300–1500 kcal)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Update Meal Plan tab</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Update Supplements tab</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 4: Business Growth -->
+    <div style="border-left: 5px solid #BDB2CF; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">🚀 01:30 PM – 05:30 PM · Business Growth Block</div>
+        <button class="add-btn" onclick="startTimer(50)" style="padding: 4px 8px; font-size: 11px;">⏱ 50m</button>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">Digital marketing business building · high-value asset creation (Ballen/Anderson models). 50-min sprints. Block distracting sites.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: var(--accent); font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid var(--border);">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Sprint 1: Focus work (50m)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Sprint 2: Focus work (50m)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Sprint 3: Focus work (50m)</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Sprint 4: Focus work (50m)</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 5: Packing Wrap-Up -->
+    <div style="border-left: 5px solid #E6A192; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">🔧 05:30 PM – 07:00 PM · Final Packing & Dinner</div>
+        <button class="add-btn" onclick="startTimer(45)" style="padding: 4px 8px; font-size: 11px;">⏱ 45m</button>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">Final packing sweep (Bathroom/Garage). Final meal before 7:00 PM fasting window closes.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: var(--accent); font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid var(--border);">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Bathroom: pull items, pack</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Garage: final sweep</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Final meal (before 7:00 PM)</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 6: Buffer & Transition -->
+    <div style="border-left: 5px solid #E2E8F0; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">⏳ 07:00 PM – 09:00 PM · Buffer & Transition Zone</div>
+        <span style="font-size: 11px; color: var(--soft);">No timer · white space</span>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">White space. Relax, read, or low-dopamine tasks. Prevents transition shock that triggers anxiety.</div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 7: Structured Hyperfocus -->
+    <div style="border-left: 5px solid #4A6B82; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">💻 09:00 PM – 10:30 PM · Structured Hyperfocus Window</div>
+        <button class="add-btn" onclick="startTimer(90)" style="padding: 4px 8px; font-size: 11px;">⏱ 90m</button>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">Capitalize on natural "second wind." Check & tweak macros for tomorrow (1300 kcal target). App conceptualization/coding for monetization strategy.</div>
+      <div onclick="toggleSubtasks(this)" style="cursor: pointer; color: var(--accent); font-size: 12px; margin-bottom: 6px;">▶ Expand sub-tasks</div>
+      <div style="display: none; padding-top: 8px; border-top: 1px solid var(--border);">
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Macro review & optimization for tomorrow</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>Track data variations</label></div>
+        <div class="check-item" onclick="toggleCheck(event)" style="font-size: 12px; margin-bottom: 6px;"><input type="checkbox" data-store="w22_acct" /><label>App development / monetization work</label></div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete</label>
+      </div>
+    </div>
+
+    <!-- Block 8: Shutdown Protocol -->
+    <div style="border-left: 5px solid #E2E8F0; background: #1a1a1a; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 13px; font-weight: bold; color: var(--accent2);">🌙 10:30 PM – 11:00 PM · The Shutdown Protocol</div>
+        <span style="font-size: 11px; color: var(--soft);">30m wind-down</span>
+      </div>
+      <div style="font-size: 12px; color: var(--soft); margin-bottom: 8px; line-height: 1.4;">Total digital shutdown. Screen filters on. Prepare environment for 11:00 PM sleep target.</div>
+      <div class="check-item" onclick="toggleCheck(this)" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+        <input type="checkbox" data-store="w22_acct" />
+        <label style="font-weight: bold;">✓ Block Complete & Asleep by 11 PM</label>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- WEEKLY HEATMAP (7 days × 8 blocks matrix) -->
+  <div class="card" style="background: #ffffff; border: 1px solid #e0e0e0;">
+    <div class="card-title" style="color: #2d3748;">📊 Weekly Adherence Heatmap</div>
+    <p style="font-size: 12px; color: #666; margin-bottom: 16px;">Auto-tracks your daily block completions. Each row = one time block. Each column = one day. Colors show your consistency pattern.</p>
+    
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+        <thead>
+          <tr>
+            <th style="padding: 8px; text-align: left; color: #2d3748; border-bottom: 2px solid #ddd;">Block</th>
+            <th style="padding: 8px; text-align: center; color: #2d3748; border-bottom: 2px solid #ddd;">Mon</th>
+            <th style="padding: 8px; text-align: center; color: #2d3748; border-bottom: 2px solid #ddd;">Tue</th>
+            <th style="padding: 8px; text-align: center; color: #2d3748; border-bottom: 2px solid #ddd;">Wed</th>
+            <th style="padding: 8px; text-align: center; color: #2d3748; border-bottom: 2px solid #ddd;">Thu</th>
+            <th style="padding: 8px; text-align: center; color: #2d3748; border-bottom: 2px solid #ddd;">Fri</th>
+            <th style="padding: 8px; text-align: center; color: #2d3748; border-bottom: 2px solid #ddd;">Sat</th>
+            <th style="padding: 8px; text-align: center; color: #2d3748; border-bottom: 2px solid #ddd;">Sun</th>
+          </tr>
+        </thead>
+        <tbody id="heatmap-tbody">
+          <!-- Generated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAcctSection()" style="width: 100%; margin-top: 12px;">↺ Reset All Accountability Data</button>
+
+</section>
+
+<style>
+  #tab-accountability {
+    background: #ffffff !important;
+    color: #2d3748 !important;
+  }
+  #tab-accountability .card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    color: #2d3748;
+  }
+  #tab-accountability .card-title {
+    color: #2d3748;
+  }
+  #tab-accountability p {
+    color: #666;
+  }
+  #tab-accountability .check-item {
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .heatmap-cell {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    color: #fff;
+    margin: 2px;
+  }
+  .heatmap-cell.incomplete {
+    background: #f0f0f0;
+    color: #999;
+  }
+  .heatmap-cell.sage-green {
+    background: #8FBC8F;
+    border: 1px solid #7fb069;
+  }
+  .heatmap-cell.slate-blue {
+    background: #A4C2D7;
+    border: 1px solid #8fa3b8;
+    color: #fff;
+  }
+  .heatmap-cell.terracotta {
+    background: #E6A192;
+    border: 1px solid #d68776;
+  }
+  .heatmap-cell.lavender {
+    background: #BDB2CF;
+    border: 1px solid #a89fb5;
+  }
+</style>
+
+<script>
+  const blockColors = {
+    'K':  { name: 'Kickstart & Movement', color: 'sage-green', hex: '#8FBC8F' },
+    'DW': { name: 'Deep Work (The Move)', color: 'slate-blue', hex: '#A4C2D7' },
+    'Nu': { name: 'Nutrition & Reset', color: 'terracotta', hex: '#E6A192' },
+    'BG': { name: 'Business Growth', color: 'lavender', hex: '#BDB2CF' },
+    'PW': { name: 'Packing Wrap-Up', color: 'terracotta', hex: '#E6A192' },
+    'BT': { name: 'Buffer & Transition', color: 'incomplete', hex: '#f0f0f0' },
+    'HF': { name: 'Structured Hyperfocus', color: 'slate-blue', hex: '#A4C2D7' },
+    'SP': { name: 'Shutdown Protocol', color: 'incomplete', hex: '#f0f0f0' }
+  };
+
+  const blockOrder = ['K', 'DW', 'Nu', 'BG', 'PW', 'BT', 'HF', 'SP'];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  function getBlockCheckboxes() {
+    // Returns an object mapping each block ID to its "Block Complete" checkbox
+    const checkboxes = {};
+    const blockSections = document.querySelectorAll('#tab-accountability > div.card > div[style*="border-left"]');
+    let blockIdx = 0;
+    
+    blockSections.forEach((section) => {
+      if (blockIdx < blockOrder.length) {
+        const blockId = blockOrder[blockIdx];
+        const completeCheckbox = section.querySelector('input[type="checkbox"]:last-of-type');
+        if (completeCheckbox) {
+          checkboxes[blockId] = completeCheckbox;
+        }
+        blockIdx++;
+      }
+    });
+    
+    return checkboxes;
+  }
+
+  function initHeatmap() {
+    const tbody = document.getElementById('heatmap-tbody');
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const blocks = ['K', 'DW', 'Nu', 'BG', 'PW', 'BT', 'HF', 'SP'];
+    
+    tbody.innerHTML = '';
+    
+    blocks.forEach((blockId, blockIdx) => {
+      const row = document.createElement('tr');
+      const blockInfo = blockColors[blockId];
+      
+      const nameCell = document.createElement('td');
+      nameCell.style.cssText = 'padding: 8px; font-weight: bold; color: #2d3748; border-bottom: 1px solid #eee; min-width: 80px;';
+      nameCell.textContent = blockInfo.name.split(' (')[0]; // Short name
+      row.appendChild(nameCell);
+      
+      days.forEach((day, dayIdx) => {
+        const cell = document.createElement('td');
+        cell.style.cssText = 'padding: 8px; text-align: center; border-bottom: 1px solid #eee;';
+        
+        // Get today's day of week (0 = Sunday)
+        const today = new Date().getDay();
+        const dayOffset = (dayIdx === 6) ? 0 : dayIdx + 1; // Convert Mon(0) to Sun(6) format
+        
+        // Retrieve stored completion state from localStorage
+        const key = `acct_${blockId}_${dayIdx}`;
+        const isCompleted = localStorage.getItem(key) === 'true';
+        
+        const cellDiv = document.createElement('div');
+        cellDiv.className = `heatmap-cell ${isCompleted ? blockInfo.color : 'incomplete'}`;
+        cellDiv.textContent = isCompleted ? '✓' : '—';
+        cellDiv.dataset.blockId = blockId;
+        cellDiv.dataset.dayIdx = dayIdx;
+        cellDiv.dataset.key = key;
+        
+        cell.appendChild(cellDiv);
+        row.appendChild(cell);
+      });
+      
+      tbody.appendChild(row);
+    });
+  }
+
+  function updateHeatmapCell(blockId) {
+    // Get today's day of week (0 = Sunday, 1 = Monday, etc.)
+    const today = new Date().getDay();
+    const dayIdx = today === 0 ? 6 : today - 1; // Convert to Mon=0, Sun=6 format
+    
+    const checkboxes = getBlockCheckboxes();
+    const isCompleted = checkboxes[blockId] ? checkboxes[blockId].checked : false;
+    const key = `acct_${blockId}_${dayIdx}`;
+    
+    // Store in localStorage
+    localStorage.setItem(key, isCompleted ? 'true' : 'false');
+    
+    // Update the heatmap cell visually
+    const cellDiv = document.querySelector(`[data-block-id="${blockId}"][data-day-idx="${dayIdx}"]`);
+    if (cellDiv) {
+      const blockInfo = blockColors[blockId];
+      cellDiv.className = `heatmap-cell ${isCompleted ? blockInfo.color : 'incomplete'}`;
+      cellDiv.textContent = isCompleted ? '✓' : '—';
+    }
+  }
+
+  function toggleSubtasks(el) {
+    const subtasks = el.nextElementSibling;
+    if (subtasks && subtasks.style) {
+      subtasks.style.display = subtasks.style.display === 'none' ? 'block' : 'none';
+      el.textContent = subtasks.style.display === 'none' ? '▶ Expand sub-tasks' : '▼ Collapse sub-tasks';
+    }
+  }
+
+  function startTimer(minutes) {
+    alert('⏱ Timer: ' + minutes + ' minutes started. Use your device timer or set a reminder.');
+  }
+
+  function resetAcctSection() {
+    if (confirm('Reset all accountability data?')) {
+      document.querySelectorAll('#tab-accountability input[type="checkbox"]').forEach(cb => cb.checked = false);
+      
+      // Clear localStorage
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('acct_')) {
+          localStorage.removeItem(key);
+        }
+      }
+      
+      initHeatmap();
+      updateProgress();
+    }
+  }
+
+  // Listen for checkbox changes in block complete sections
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('#tab-accountability input[type="checkbox"]')) {
+      // Find which block this checkbox belongs to
+      const blockSection = e.target.closest('div[style*="border-left"]');
+      if (blockSection && blockSection.parentElement.classList.contains('card')) {
+        // This is a block complete checkbox
+        const blockIdx = Array.from(blockSection.parentElement.querySelectorAll('div[style*="border-left"]')).indexOf(blockSection);
+        if (blockIdx >= 0 && blockIdx < blockOrder.length) {
+          updateHeatmapCell(blockOrder[blockIdx]);
+        }
+      }
+    }
+  });
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initHeatmap);
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════ SUPPLEMENTS TAB -->
+<section class="section" id="tab-supplements">
+
+  <div class="week-banner">
+    <h2>Week 22 · Supplement Protocol</h2>
+    <p>Cellular healing · Neurotransmitter mood support (Julia Ross Mood Cure) · Forher & Fem-Dophilus removed · Flag for doctor post-move</p>
+  </div>
+
+  <div class="alert">✅ Julia Ross Mood Cure Protocol Deployed: L-Tyrosine + DLPA upon waking (empty stomach, fasted) · L-Glutamine with breakfast · 5-HTP afternoon (3–5 PM) · GABA evening. Targets neurotransmitter-driven mood + cravings at source.</div>
+  <div class="alert">⚠️ TRU Niagen — SKIP on salmon days (Wed) and sardine days (Sat). Take all other days.</div>
+  <div class="alert alert-green">✓ Complement ForHer — removed this week. Flag for doctor at next visit. Resume post-move.</div>
+  <div class="alert alert-green">✓ Fem-Dophilus — removed this week.</div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">🌅 Window 1 — Upon Waking (Empty Stomach)</div>
+      <div class="supp-window-sub">First thing on waking · fasted · 30+ min gap before breakfast · optimal absorption</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Collagen Peptides — 10g<span class="check-note">Dissolve in warm bone broth or hot water · empty stomach · non-negotiable daily</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>L-Tyrosine — 500–1000mg<span class="check-note">Empty stomach · dopamine + energy + focus precursor · Julia Ross Mood Cure · PHASE 1 (deploy now)</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>D,L-Phenylalanine (DLPA) — 500–1000mg<span class="check-note">Empty stomach · endorphin + pain sensitivity + comfort-eating support · Julia Ross protocol · PHASE 2 (add after 5–7 days if sweet cravings persist)</span></label></div>
+      <div class="check-note" style="padding: 8px 0; color: var(--soft); border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">📋 Julia Ross Protocol: Start with L-Tyrosine only Mon–Wed. Monitor sweet cravings + energy. If cravings remain high after 5–7 days, add DLPA on Thu. Both must be fasted (empty stomach, 30+ min before eating).</div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">☕ Window 2 — With Breakfast Latte (9–10 AM)</div>
+      <div class="supp-window-sub">With MCT collagen latte · fat-soluble + amino acid stack</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>L-Glutamine — 500mg<span class="check-note">With food · gut barrier + GABA synthesis support · flexible timing · Julia Ross protocol · take daily</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Markus Vitamin C — per label<span class="check-note">Morning · immune + collagen support</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Complement Essential — 3 caps<span class="check-note">Morning only · do not split dose</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>TRU Niagen (NR) — 1000mg (2 caps)<span class="check-note">Skip Wed (salmon) & Sat (sardine) · take all other days</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>TMG — 500mg<span class="check-note">Pairs with NR · methylation support</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>CoQ10 Super Ubiquinol — per label<span class="check-note">Fat-soluble · cellular energy</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>K2 MK-7 — 100mcg<span class="check-note">Bone + cardiovascular support</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Optimized Quercetin — per label<span class="check-note">Anti-inflammatory · AMPK support</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Biotin — per label<span class="check-note">Pause 48–72 hrs before bloodwork</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>MegaFood Daily Turmeric — per label<span class="check-note">Anti-inflammatory</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Pure Hawaiian Spiralina — per label<span class="check-note">Cellular nutrition</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Markus Green Drink — per label<span class="check-note">Morning · cellular greens</span></label></div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">🍽️ Window 3 — With Lunch</div>
+      <div class="supp-window-sub">With food · mid-day stack</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Lutein & Zeaxanthin — per label<span class="check-note">Eye health · with food</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Creatine Monohydrate — 5g<span class="check-note">Muscle + cognitive · stir into water</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Calcium Citrate — ¾ tsp in warm water<span class="check-note">Lunch bone health dose · split protocol</span></label></div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">🌤️ Afternoon — Sweet Cravings Support</div>
+      <div class="supp-window-sub">3–5pm · peak craving window · with or without food</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>5-HTP — 50mg<span class="check-note">Afternoon only · serotonin support · intercepts sweet cravings at neurochemical root · from Julia Ross Mood Cure protocol</span></label></div>
+      <div class="check-note" style="padding: 8px 0; color: var(--soft); border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px;">📈 Escalation: If cravings persist after 5–7 days, increase to 100mg.</div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">🌿 Pre-Dinner — Empty Stomach</div>
+      <div class="supp-window-sub">Before dinner · gut support</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Complement Gut Nurture — 1 cap<span class="check-note">Pre-dinner · empty stomach</span></label></div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">🌙 Window 4 — Bedtime</div>
+      <div class="supp-window-sub">After dinner → before sleep · neurotransmitter + sleep stack</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>GABA — 500mg<span class="check-note">Evening · anxiety/calm support · from Julia Ross Mood Cure protocol · pairs with magnesium</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Skin Restoring Ceramides — 350mg<span class="check-note">After dinner</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Magnesium Breakthrough — 250mg<span class="check-note">Bedtime · sleep + recovery</span></label></div>
+      <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_supp"><label>Ashwagandha — 500mg (1 cap)<span class="check-note">Evening · cortisol regulation · move week</span></label></div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetSection('w22_supp')">↺ Reset Supplements</button>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ MEAL PLAN TAB -->
+<section class="section" id="tab-meals">
+
+  <div class="week-banner">
+    <h2>Week 22 · Jun 22–28 · Muscle Retention + AMPK Activation</h2>
+    <p>💪 179g protein (2.0g/kg per Bryan Johnson) · 75g carbs · 62g fat · 1,574 kcal · Protein rotation: Turkey, Tuna, Meatballs</p>
+  </div>
+
+  <div class="alert">✅ WEEK 22 PROTOCOL ACTIVE: Protein 179g (from 120g) to prevent muscle catabolism. Calories 1,574 (from 1,400). Supports menopausal muscle preservation + neurotransmitter stability.</div>
+  <div class="alert">🧠 Julia Ross Protocol — Neurotransmitter Support: L-Tyrosine + DLPA upon waking (empty stomach, fasted) · L-Glutamine with breakfast · 5-HTP afternoon 3–5 PM (sweet cravings peak) · GABA evening</div>
+  <div class="alert">⚡ Movement: 10 air squats every 45 min (8am–6pm) · 14-hour fast (6pm–8am) · AMPK activation framework deployed</div>
+
+  <div class="card">
+    <div class="card-title">⭐ Week 22 Pillars — Bryan Johnson Menopause + AMPK</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--accent);">💪 179g protein (muscle anchor)</span>
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--accent);">☕ MCT Latte + matcha EGCG</span>
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--accent2);">🧅 Quercetin (onion/apple) daily</span>
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--accent2);">🥬 Broccoli + arugula + greens</span>
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--accent2);">⚡ Vigorous bursts (70%+ HR)</span>
+    </div>
+  </div>
+
+  <!-- MONDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div><div class="day-name">Monday · Jun 22</div><div class="day-meta">~P 180g · Chicken Breast Last Day · 1,574 cal · Protein-prioritized week begins</div></div>
+      <div class="day-arrow">▼</div>
+    </div>
+    <div class="day-body">
+      <div class="alert">✅ Week 22 ACTIVE: 179g protein · 75g carbs · 62g fat · 1,574 kcal · AMPK + neurotransmitter framework deployed · Muscle retention priority</div>
+      <div class="meal-slot">
+        <div class="meal-label">🌅 Breakfast</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Spicy Cinnamon MCT Collagen Almond Latte (full recipe) · Pique matcha 1 serving · Spiralina 1 tsp<span class="check-note">~P 12.3g · 154 cal · AMPK + thermal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Eggs 3.41 medium scrambled · onion 25g · butter 5g · Cottage cheese 112g · Maple syrup 1 tsp<span class="check-note">~P 42g · 325 cal · breakfast protein anchor</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Oats 0.25 cup dry · 1 tbsp Truvani protein powder (rotating flavors) · frozen blueberries 0.5 cup · LMNT 1/8 tsp<span class="check-note">~P 20g · 170 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">☀️ Lunch</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Chicken breast 4 oz cooked skinless · avocado 15g · arugula 45g · blueberries 25g · lemon juice 2 wedge · tarragon 1 tsp · bone broth 1 serving<span class="check-note">~P 41g · 220 cal · quercetin support</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Markus Green Formula 1 serving · Calcium Citrate 0.75 tsp × 1.50 tsp in water</label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌤️ Snack</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Good Culture cottage cheese 131g · blueberries fresh 30g · turkey breast sliced 1 oz<span class="check-note">~P 25g · 115 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌙 Dinner</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet tuna 0.91 can drained · broccoli cooked 158g · cucumber raw 74.5g · Premium Gold potatoes 115g · onion raw 60g · apple fresh 45g · lemon juice 2 wedge · Celtic sea salt 1/4 tsp<span class="check-note">~P 32g · 280 cal · AMPK closure</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Calcium Citrate 0.75 tsp × 1.50 tsp · Epic Xylitol mints 2</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUESDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div><div class="day-name">Tuesday · Jun 23</div><div class="day-meta">~P 180g · Canned Tuna Day 1 · 1,574 cal</div></div>
+      <div class="day-arrow">▼</div>
+    </div>
+    <div class="day-body">
+      <div class="meal-slot">
+        <div class="meal-label">🌅 Breakfast</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Spicy Cinnamon MCT Collagen Almond Latte (full recipe) · Pique matcha 1 serving · Spiralina 1 tsp<span class="check-note">~P 12.3g · 154 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Eggs 3.41 medium scrambled · onion 25g · butter 5g · Cottage cheese 112g · Maple syrup 1 tsp<span class="check-note">~P 42g · 325 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Oats 0.25 cup dry · 1 tbsp Truvani protein powder · frozen blueberries 0.5 cup · LMNT 1/8 tsp<span class="check-note">~P 20g · 170 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">☀️ Lunch</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 4 oz drained · avocado 15g · arugula 45g · blueberries 25g · lemon juice 2 wedge · tarragon 1 tsp · bone broth 1 serving<span class="check-note">~P 41g · 220 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Markus Green Formula 1 serving · Calcium Citrate 0.75 tsp × 1.50 tsp</label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌤️ Snack</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Good Culture cottage cheese 131g · blueberries fresh 30g · turkey breast sliced 1 oz<span class="check-note">~P 25g · 115 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌙 Dinner</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 0.91 can drained · broccoli cooked 158g · cucumber raw 74.5g · Premium Gold potatoes 115g · onion raw 60g · apple fresh 45g · lemon juice 2 wedge · Celtic sea salt 1/4 tsp<span class="check-note">~P 32g · 280 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Calcium Citrate 0.75 tsp × 1.50 tsp · Epic Xylitol mints 2</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEDNESDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div><div class="day-name">Wednesday · Jun 24</div><div class="day-meta">~P 180g · Turkey Slices Day 1 · 1,574 cal</div></div>
+      <div class="day-arrow">▼</div>
+    </div>
+    <div class="day-body">
+      <div class="meal-slot">
+        <div class="meal-label">🌅 Breakfast</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Spicy Cinnamon MCT Collagen Almond Latte (full recipe) · Pique matcha 1 serving · Spiralina 1 tsp<span class="check-note">~P 12.3g · 154 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Eggs 3.41 medium scrambled · onion 25g · butter 5g · Cottage cheese 112g · Maple syrup 1 tsp<span class="check-note">~P 42g · 325 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Oats 0.25 cup dry · 1 tbsp Truvani protein powder · frozen blueberries 0.5 cup · LMNT 1/8 tsp<span class="check-note">~P 20g · 170 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">☀️ Lunch</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Turkey breast sliced 4 oz cooked · avocado 15g · arugula 45g · blueberries 25g · lemon juice 2 wedge · tarragon 1 tsp · bone broth 1 serving<span class="check-note">~P 41g · 220 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Markus Green Formula 1 serving · Calcium Citrate 0.75 tsp × 1.50 tsp</label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌤️ Snack</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Good Culture cottage cheese 131g · blueberries fresh 30g · turkey breast sliced 1 oz<span class="check-note">~P 25g · 115 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌙 Dinner</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 0.91 can drained · broccoli cooked 158g · cucumber raw 74.5g · Premium Gold potatoes 115g · onion raw 60g · apple fresh 45g · lemon juice 2 wedge · Celtic sea salt 1/4 tsp<span class="check-note">~P 32g · 280 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Calcium Citrate 0.75 tsp × 1.50 tsp · Epic Xylitol mints 2</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THURSDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div><div class="day-name">Thursday · Jun 25</div><div class="day-meta">~P 180g · Force of Nature Meatballs · 1,574 cal</div></div>
+      <div class="day-arrow">▼</div>
+    </div>
+    <div class="day-body">
+      <div class="meal-slot">
+        <div class="meal-label">🌅 Breakfast</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Spicy Cinnamon MCT Collagen Almond Latte (full recipe) · Pique matcha 1 serving · Spiralina 1 tsp<span class="check-note">~P 12.3g · 154 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Eggs 3.41 medium scrambled · onion 25g · butter 5g · Cottage cheese 112g · Maple syrup 1 tsp<span class="check-note">~P 42g · 325 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Oats 0.25 cup dry · 1 tbsp Truvani protein powder · frozen blueberries 0.5 cup · LMNT 1/8 tsp<span class="check-note">~P 20g · 170 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">☀️ Lunch</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Force of Nature grass-fed meatballs 4 oz (2–3 meatballs) · avocado 15g · arugula 45g · blueberries 25g · lemon juice 2 wedge · tarragon 1 tsp · bone broth 1 serving<span class="check-note">~P 41g · 240 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Markus Green Formula 1 serving · Calcium Citrate 0.75 tsp × 1.50 tsp</label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌤️ Snack</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Good Culture cottage cheese 131g · blueberries fresh 30g · turkey breast sliced 1 oz<span class="check-note">~P 25g · 115 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌙 Dinner</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 0.91 can drained · broccoli cooked 158g · cucumber raw 74.5g · Premium Gold potatoes 115g · onion raw 60g · apple fresh 45g · lemon juice 2 wedge · Celtic sea salt 1/4 tsp<span class="check-note">~P 32g · 280 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Calcium Citrate 0.75 tsp × 1.50 tsp · Epic Xylitol mints 2</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRIDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div><div class="day-name">Friday · Jun 26</div><div class="day-meta">~P 180g · Canned Tuna Day 2 · 1,574 cal</div></div>
+      <div class="day-arrow">▼</div>
+    </div>
+    <div class="day-body">
+      <div class="meal-slot">
+        <div class="meal-label">🌅 Breakfast</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Spicy Cinnamon MCT Collagen Almond Latte (full recipe) · Pique matcha 1 serving · Spiralina 1 tsp<span class="check-note">~P 12.3g · 154 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Eggs 3.41 medium scrambled · onion 25g · butter 5g · Cottage cheese 112g · Maple syrup 1 tsp<span class="check-note">~P 42g · 325 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Oats 0.25 cup dry · 1 tbsp Truvani protein powder · frozen blueberries 0.5 cup · LMNT 1/8 tsp<span class="check-note">~P 20g · 170 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">☀️ Lunch</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 4 oz drained · avocado 15g · arugula 45g · blueberries 25g · lemon juice 2 wedge · tarragon 1 tsp · bone broth 1 serving<span class="check-note">~P 41g · 220 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Markus Green Formula 1 serving · Calcium Citrate 0.75 tsp × 1.50 tsp</label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌤️ Snack</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Good Culture cottage cheese 131g · blueberries fresh 30g · turkey breast sliced 1 oz<span class="check-note">~P 25g · 115 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌙 Dinner</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 0.91 can drained · broccoli cooked 158g · cucumber raw 74.5g · Premium Gold potatoes 115g · onion raw 60g · apple fresh 45g · lemon juice 2 wedge · Celtic sea salt 1/4 tsp<span class="check-note">~P 32g · 280 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Calcium Citrate 0.75 tsp × 1.50 tsp · Epic Xylitol mints 2</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SATURDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div><div class="day-name">Saturday · Jun 27</div><div class="day-meta">~P 180g · Turkey Slices Day 2 · 1,574 cal</div></div>
+      <div class="day-arrow">▼</div>
+    </div>
+    <div class="day-body">
+      <div class="meal-slot">
+        <div class="meal-label">🌅 Breakfast</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Spicy Cinnamon MCT Collagen Almond Latte (full recipe) · Pique matcha 1 serving · Spiralina 1 tsp<span class="check-note">~P 12.3g · 154 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Eggs 3.41 medium scrambled · onion 25g · butter 5g · Cottage cheese 112g · Maple syrup 1 tsp<span class="check-note">~P 42g · 325 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Oats 0.25 cup dry · 1 tbsp Truvani protein powder · frozen blueberries 0.5 cup · LMNT 1/8 tsp<span class="check-note">~P 20g · 170 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">☀️ Lunch</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Turkey breast sliced 4 oz cooked · avocado 15g · arugula 45g · blueberries 25g · lemon juice 2 wedge · tarragon 1 tsp · bone broth 1 serving<span class="check-note">~P 41g · 220 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Markus Green Formula 1 serving · Calcium Citrate 0.75 tsp × 1.50 tsp</label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌤️ Snack</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Good Culture cottage cheese 131g · blueberries fresh 30g · turkey breast sliced 1 oz<span class="check-note">~P 25g · 115 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌙 Dinner</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 0.91 can drained · broccoli cooked 158g · cucumber raw 74.5g · Premium Gold potatoes 115g · onion raw 60g · apple fresh 45g · lemon juice 2 wedge · Celtic sea salt 1/4 tsp<span class="check-note">~P 32g · 280 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Calcium Citrate 0.75 tsp × 1.50 tsp · Epic Xylitol mints 2</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUNDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div><div class="day-name">Sunday · Jun 28</div><div class="day-meta">~P 180g · Force of Nature Meatballs Day 2 · Week 22 Closure · Batch Prep Week 23</div></div>
+      <div class="day-arrow">▼</div>
+    </div>
+    <div class="day-body">
+      <div class="alert">✅ Sunday Reflection: Week 22 complete. Measure waist/weight Friday morning. If sweet cravings persist after 5-7 days, escalate 5-HTP to 100mg and add DLPA 500-1000mg + L-Glutamine 500mg to Phase 2 amino stack.</div>
+      <div class="meal-slot">
+        <div class="meal-label">🌅 Breakfast</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Spicy Cinnamon MCT Collagen Almond Latte (full recipe) · Pique matcha 1 serving · Spiralina 1 tsp<span class="check-note">~P 12.3g · 154 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Eggs 3.41 medium scrambled · onion 25g · butter 5g · Cottage cheese 112g · Maple syrup 1 tsp<span class="check-note">~P 42g · 325 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Oats 0.25 cup dry · 1 tbsp Truvani protein powder · frozen blueberries 0.5 cup · LMNT 1/8 tsp<span class="check-note">~P 20g · 170 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">☀️ Lunch</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Force of Nature grass-fed meatballs 4 oz (2–3 meatballs) · avocado 15g · arugula 45g · blueberries 25g · lemon juice 2 wedge · tarragon 1 tsp · bone broth 1 serving<span class="check-note">~P 41g · 240 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Markus Green Formula 1 serving · Calcium Citrate 0.75 tsp × 1.50 tsp</label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌤️ Snack</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Good Culture cottage cheese 131g · blueberries fresh 30g · turkey breast sliced 1 oz<span class="check-note">~P 25g · 115 cal</span></label></div>
+      </div>
+
+      <div class="meal-slot">
+        <div class="meal-label">🌙 Dinner</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Wild Planet canned tuna 0.91 can drained · broccoli cooked 158g · cucumber raw 74.5g · Premium Gold potatoes 115g · onion raw 60g · apple fresh 45g · lemon juice 2 wedge · Celtic sea salt 1/4 tsp<span class="check-note">~P 32g · 280 cal</span></label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_meals" onchange="saveMeal(this)"><label>Calcium Citrate 0.75 tsp × 1.50 tsp · Epic Xylitol mints 2</label></div>
+      </div>
+
+      <div class="meal-slot" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <div class="meal-label">📋 Week 23 Prep (Tomorrow)</div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_checklist"><label>Sunday evening: Boil gold potatoes · Cook pink lentils · Portion meatballs. Ready to deploy Mon–Fri with zero friction.</label></div>
+        <div class="meal-item"><input type="checkbox" data-store="w22_checklist"><label>Check: 10 air squats every 45 min logged · Fasting 6pm–8am maintained · Amino acid timings recorded in Daily Flow</label></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ EXERCISE TAB -->
+<section class="section" id="tab-exercise">
+
+  <div class="week-banner">
+    <h2>Week 22 · Progressive Exercise Plan</h2>
+    <p>Dublin established · Full target routine · Moving week intensity may be lower · Adjust as needed</p>
+  </div>
+
+  <div class="alert">⚠️ Knee Protocol — all weeks: shallow squats with wide feet · wall sits 20–30 sec to start · flat terrain walking · stop on joint pain, not muscle fatigue.</div>
+
+  <div class="card">
+    <div class="card-title">Week Position</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 10px;color:var(--soft);">Wk 1 Foundation</span>
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 10px;color:var(--soft);">Wk 2 Build</span>
+      <span style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:4px 10px;color:var(--soft);">Wk 3 Progress</span>
+      <span style="font-size:12px;background:var(--accent);color:#000;border-radius:4px;padding:4px 10px;font-weight:bold;">Wk 4 ← Target</span>
+    </div>
+    <p style="font-size:13px;color:var(--soft);margin-top:10px;">Full sets across all exercises. Joint pain is a stop signal; muscle fatigue is expected. Move week may require lower intensity — adjust based on energy + stress.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Session</div>
+    <div style="margin-bottom:10px;">
+      <label style="font-size:13px;color:var(--soft);">Date</label>
+      <input type="date" id="ex-date" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;margin-left:8px;">
+    </div>
+
+    <div class="exercise-grid">
+      <div class="ex-item"><input type="checkbox" id="ex-walk"><label class="ex-label" for="ex-walk">🚶 Walk</label><input class="ex-input" type="text" placeholder="mi" id="ex-walk-val"><span class="ex-unit">miles</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-sumo"><label class="ex-label" for="ex-sumo">🦵 Sumo Squats</label><input class="ex-input" type="number" placeholder="100" id="ex-sumo-val"><span class="ex-unit">reps</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-wallsit"><label class="ex-label" for="ex-wallsit">🧱 Wall Sit</label><input class="ex-input" type="number" placeholder="60" id="ex-wallsit-val"><span class="ex-unit">sec</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-ankle"><label class="ex-label" for="ex-ankle">🔄 Ankle Rotations</label><input class="ex-input" type="number" placeholder="60" id="ex-ankle-val"><span class="ex-unit">sec</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-plank"><label class="ex-label" for="ex-plank">🏋️ Planks</label><input class="ex-input" type="number" placeholder="60" id="ex-plank-val"><span class="ex-unit">sec</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-dips"><label class="ex-label" for="ex-dips">💪 Tricep Dips</label><input class="ex-input" type="number" placeholder="30" id="ex-dips-val"><span class="ex-unit">reps</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-push"><label class="ex-label" for="ex-push">⬆️ Pushups</label><input class="ex-input" type="number" placeholder="20" id="ex-push-val"><span class="ex-unit">reps</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-lat"><label class="ex-label" for="ex-lat">🏋️ Lateral Raises</label><input class="ex-input" type="number" placeholder="14" id="ex-lat-val"><span class="ex-unit">×3</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-atw"><label class="ex-label" for="ex-atw">🔃 Around the Worlds</label><input class="ex-input" type="number" placeholder="14" id="ex-atw-val"><span class="ex-unit">×3</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-tri"><label class="ex-label" for="ex-tri">💪 Overhead Tricep Ext</label><input class="ex-input" type="number" placeholder="14" id="ex-tri-val"><span class="ex-unit">×3</span></div>
+      <div class="ex-item"><input type="checkbox" id="ex-curl"><label class="ex-label" for="ex-curl">💪 Bicep Curls</label><input class="ex-input" type="number" placeholder="15" id="ex-curl-val"><span class="ex-unit">×3</span></div>
+    </div>
+
+    <div style="margin-top:12px;font-size:13px;color:var(--soft);">Session Progress: <span id="ex-progress">0 of 11</span> done</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="save-btn" onclick="saveSession()">✓ Save Session</button>
+      <button class="reset-btn" onclick="clearSession()">↺ Clear</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Session History</div>
+    <div id="session-history"><div class="empty-state">No sessions logged yet.</div></div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ ORAL CARE TAB -->
+<section class="section" id="tab-oral">
+
+  <div class="week-banner">
+    <h2>Dr. Ellie Phillips + Gum Regeneration · Week 22 · Jun 22–28</h2>
+    <p>Protocol continues. Non-negotiable.</p>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">🌅 Morning Routine</div>
+      <div class="supp-window-sub">Dr. Ellie + K2/D3 + Black Seed + Matcha</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="protocol-step"><div class="step-num">1</div><div class="step-content"><div class="step-name">CloSYS — rinse 60 sec</div><div class="step-note">pH-neutralizing · spit</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">2</div><div class="step-content"><div class="step-name">Crest Pro-Health — brush 2 min</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">3</div><div class="step-content"><div class="step-name">Listerine — rinse 60 sec</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">4</div><div class="step-content"><div class="step-name">K2 MK-7 + D3 — sublingual drops</div><div class="step-note">Hold 60 sec · take with fat at breakfast</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">5</div><div class="step-content"><div class="step-name">Black Seed Oil Poultice</div><div class="step-note">1 tsp black seed oil + ¼ tsp sea salt + 2 drops clove oil · leave 15 min · do not rinse</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">6</div><div class="step-content"><div class="step-name">Ceremonial Matcha — 1 cup</div><div class="step-note">EGCG inhibits bacteria + reduces gum inflammation</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">☀️ Afternoon Protocol</div>
+      <div class="supp-window-sub">Pick one · alternate daily</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="protocol-step"><div class="step-num">A</div><div class="step-content"><div class="step-name">CoQ10 + Vitamin C Paste</div><div class="step-note">1 CoQ10 cap + ¼ tsp Vit C + 3 drops olive oil · apply to gum line · leave overnight</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">B</div><div class="step-content"><div class="step-name">Sesame Oil + Turmeric Gum Massage</div><div class="step-note">½ tsp turmeric + 1 tsp sesame oil · 2 min · dedicated towel · modulates MMP enzymes</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">C</div><div class="step-content"><div class="step-name">Clove + Coconut Oil Pulling (optional)</div><div class="step-note">1 tsp coconut oil + 2 drops clove · swish 15–20 min · spit into trash</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">🌙 Evening Sequence</div>
+      <div class="supp-window-sub">Exact order · gum treatments absorb overnight</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="alert" style="margin-bottom:10px;">Do not eat or drink after ACT. Gum treatments absorb overnight.</div>
+      <div class="protocol-step"><div class="step-num">1</div><div class="step-content"><div class="step-name">CloSYS — rinse 60 sec</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">2</div><div class="step-content"><div class="step-name">Crest Pro-Health — brush 2 min</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">3</div><div class="step-content"><div class="step-name">ACT Rinse — 1 min</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">4</div><div class="step-content"><div class="step-name">Gengigel — apply to gum line</div><div class="step-note">Hyaluronic acid · do not rinse · rotate with Aloe+VitE</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">5</div><div class="step-content"><div class="step-name">Xylitol mint — dissolve slowly</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+      <div class="protocol-step"><div class="step-num">6</div><div class="step-content"><div class="step-name">Mouth tape — apply before sleep</div></div><input type="checkbox" data-store="w22_oral" style="accent-color:var(--accent);margin-left:auto;margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetSection('w22_oral')">↺ Reset Oral Care</button>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ MBF TAB -->
+<section class="section" id="tab-mbf">
+
+  <div class="week-banner">
+    <h2>Mind · Body · Facial — Maxilla Lite · Week 22</h2>
+    <p>Orofacial myofunctional routine — structurally distinct from oral hygiene. Weekend practice.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🌅 MindBodyFace Activation — Daily · 30 min · Before Screens</div>
+    <p style="font-size:14px;color:var(--soft);">Body online before brain. Complete before screens. Movement, breathwork, and postural practice per your current program.</p>
+    <p style="font-size:13px;color:var(--accent2);margin-top:8px;">Week 22: Dublin home established. Full routine resumes despite moving stress. Protect the morning window.</p>
+    <div class="check-item" style="margin-top:10px;" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_mbf"><label>Daily activation complete</label></div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">Saturday — Orofacial Routine · Evening · 20–30 min</div>
+      <div class="supp-window-sub">Maxilla Lite — Weekend Practice. Distinct from Dr. Ellie protocol.</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="mbf-step"><div class="mbf-step-num">1</div><div class="mbf-step-name">Trapezius relaxation</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">2</div><div class="mbf-step-name">Relaxation of the occipital muscles</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">3</div><div class="mbf-step-name">Practice 'Swallowing at the wall'</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">4</div><div class="mbf-step-name">Tongue stretching practice</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">5</div><div class="mbf-step-name">Complex for strengthening the muscles of the tongue</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">6</div><div class="mbf-step-name">Jaw massage</div></div>
+      <div class="check-item" style="margin-top:10px;" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_mbf"><label>Saturday session complete</label></div>
+    </div>
+  </div>
+
+  <div class="supp-window">
+    <div class="supp-window-header">
+      <div class="supp-window-title">Sunday — Orofacial Routine · Evening · 20–30 min</div>
+      <div class="supp-window-sub">Bone, mewing, chewing muscle release.</div>
+    </div>
+    <div class="supp-window-body">
+      <div class="mbf-step"><div class="mbf-step-num">1</div><div class="mbf-step-name">Relaxation of the occipital bone</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">2</div><div class="mbf-step-name">'Goose neck' exercise</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">3</div><div class="mbf-step-name">Mewing</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">4</div><div class="mbf-step-name">Tongue Extension Technique</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">5</div><div class="mbf-step-name">Strengthening the muscles of the tongue — 'Tongue in cheek'</div></div>
+      <div class="mbf-step"><div class="mbf-step-num">6</div><div class="mbf-step-name">Relaxation of the chewing muscles interorally</div></div>
+      <div class="check-item" style="margin-top:10px;" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_mbf"><label>Sunday session complete</label></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p style="font-size:13px;color:var(--soft);font-style:italic;">Week 22 note: Dublin home base established. Full orofacial routine resumes without move-week constraints. Weekend sessions 20–30 min. Work the neck, tongue, and jaw per the algorithms above. Post-move recovery priority.</p>
+  </div>
+
+  <button class="reset-btn" onclick="resetSection('w22_mbf')">↺ Reset MBF</button>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ MOVEMENT/PACKING TAB -->
+<section class="section" id="tab-movement">
+
+  <div class="week-banner">
+    <h2>Week 22 Relocation · Packing Sprint</h2>
+    <p>Bedroom → Office → Garage → Kitchen (last). 45-min checkpoints for momentum. Keep minimal kitchen set functional until move day. Every checkbox = dopamine hit.</p>
+  </div>
+
+  <!-- WEDNESDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <span class="day-name">📌 Wednesday Jun 24 · Bedroom</span>
+      <span class="day-arrow">▼</span>
+    </div>
+    <div class="day-body">
+      <p style="font-size:12px;color:var(--soft);margin-bottom:12px;">Soft Autumn wardrobe only. All active shoes. Books to pack. Start whenever you have time today.</p>
+      
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 1 · Wardrobe Assessment</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Pull out all clothes from drawers/closet</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Sort by Soft Autumn palette (keep) vs discard</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Start boxing keep items</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 2 · Shoes & Accessories</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Pull all shoes from closet/under bed</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Select active rotation only (discard rest)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Box active shoes + accessories</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 3 · Books & Finishing</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Pull all books from shelves/stacks</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Box books (pack, keep for Dublin)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Clear and wipe bedroom surfaces</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THURSDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <span class="day-name">🖊️ Thursday Jun 25 · Office/Desk</span>
+      <span class="day-arrow">▼</span>
+    </div>
+    <div class="day-body">
+      <p style="font-size:12px;color:var(--soft);margin-bottom:12px;">Pack desk surface + nearest drawers only. Leave the rest. Active materials only (what you've used in last 6 months).</p>
+      
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 1 · Desk Surface Clear</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Remove all items from desk top</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Wipe/clean desk surface</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Sort active materials into "pack" pile</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 2 · Nearest Drawers</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Empty top drawer (active use only)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Empty second drawer (active use only)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Leave other drawers/shelves untouched</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 3 · Box & Label</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Box all pulled items from desk + drawers</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Label box "Office - Active Materials"</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Stack in staging area</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--accent2);">
+        <p style="font-size:12px;color:var(--soft);">💪 Workout: 1 hour at your choice intensity</p>
+        <p style="font-size:12px;color:var(--soft);">🍽️ Lunch + 10 min walk</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRIDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <span class="day-name">🗑️ Friday Jun 26 · Garage Purge (Part 1)</span>
+      <span class="day-arrow">▼</span>
+    </div>
+    <div class="day-body">
+      <p style="font-size:12px;color:var(--soft);margin-bottom:12px;">Banker boxes + art supplies. Used NONE in 6 months = it all goes. Fast decision rule = no decision fatigue.</p>
+      
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 1 · Clear Banker Boxes</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Pull all banker boxes from garage</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Stack in driveway or staging area</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Sort: donation vs trash (hasn't been used = goes)</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 2 · Art Supplies Start</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Pull all art supplies from storage/shelves</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Sort into discard piles</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Begin bagging/boxing for removal</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 3 · Fill Trash/Donation</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Fill 2-3 trash bags with discard items</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Stack for pickup/curb (or donation drop)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Clear first section of garage floor</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SATURDAY -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <span class="day-name">🏁 Saturday Jun 27 · Garage Purge (Part 2)</span>
+      <span class="day-arrow">▼</span>
+    </div>
+    <div class="day-body">
+      <p style="font-size:12px;color:var(--soft);margin-bottom:12px;">Finish garage. Complete any remaining boxes/supplies. Final clear-out before kitchen packing begins.</p>
+      
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 1 · Finish Art Supplies</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Complete boxing/bagging remaining art supplies</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Load bags into donation/trash area</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Wipe down shelves/storage areas</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 2 · Finish Banker Boxes</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Complete sorting all banker boxes</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Fill final trash bags or arrange donation pickup</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Stack empty boxes for recycling/removal</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">45-Min Block 3 · Final Garage Clear</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Do final sweep/tidy of garage floor</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Confirm all trash/donation items staged for removal</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Celebrate: Bedroom + Office + Garage DONE ✓</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KITCHEN - ONGOING -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <span class="day-name">🍽️ Kitchen · Ongoing (Keep Functional)</span>
+      <span class="day-arrow">▼</span>
+    </div>
+    <div class="day-body">
+      <p style="font-size:12px;color:var(--soft);margin-bottom:12px;">Pack extraneous items this week. Keep 1 of everything for cooking: 1 bowl, 1 plate, 1 cup, 1 pot, 1 pan, 1 knife set, 1 fork, 1 spoon, 1 chopping knife.</p>
+      
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;">Daily · Pack Extraneous Dinnerware</div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Wed: Pack extra plates/bowls (keep 1 of each)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Thu: Pack extra cups/glasses (keep 1 cup)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Fri: Pack extra pots/pans (keep 1 of each)</label></div>
+        <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" data-store="w22_movement"><label>Sat: Pack extra utensils/forks/spoons (keep 1 of each)</label></div>
+      </div>
+
+      <div style="margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:6px;border-left:3px solid var(--accent3);">
+        <p style="font-size:12px;color:var(--soft);font-weight:bold;">⏰ Last Day in Las Vegas:</p>
+        <p style="font-size:12px;color:var(--soft);">Pack Tovala · Dehydrator · InstaPot + remaining kitchen items. Keep minimal set available for meals until move truck arrival.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <p style="font-size:13px;color:var(--soft);font-style:italic;">Every checkbox = dopamine hit + forward momentum. You're not deciding—you're applying rules you've already set. 45-min intervals keep your brain engaged without burnout. Dublin home awaits.</p>
+  </div>
+
+  <button class="reset-btn" onclick="resetSection('w22_movement')">↺ Reset Movement</button>
+</section>
+
+<script>
+const DB_NAME = 'dailyflow_w21';
+const DB_VER = 1;
+let db;
+
+function showTab(e, tabName) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+  e.target.classList.add('active');
+}
+
+function toggleDay(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.day-arrow');
+  const open = body.classList.toggle('open');
+  arrow.textContent = open ? '▲' : '▼';
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  if (el.querySelector('input[type=checkbox]')) {
+    el.querySelector('input[type=checkbox]').checked = !el.querySelector('input[type=checkbox]').checked;
+  }
+}
+
+function saveMeal(el) {
+  el.parentElement.classList.toggle('done');
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('[data-store]').length;
+  const done = document.querySelectorAll('[data-store]:checked').length;
+  const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('main-progress').style.width = percent + '%';
+  document.getElementById('progress-label').textContent = done + ' / ' + total + ' · ' + percent + '%';
+}
+
+function addLog(type) {
+  const input = document.getElementById(type + '-input');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  const list = document.getElementById(type + '-list');
+  if (list.querySelector('.empty-state')) list.innerHTML = '';
+  
+  const item = document.createElement('div');
+  item.className = 'log-item';
+  item.innerHTML = `<div class="log-item-content">${text}</div><div class="log-item-time">${new Date().toLocaleTimeString()}</div>`;
+  list.appendChild(item);
+  input.value = '';
+}
+
+function resetSection(store) {
+  if (confirm('Reset all checks in this section?')) {
+    document.querySelectorAll(`[data-store="${store}"]`).forEach(el => {
+      el.checked = false;
+      if (el.parentElement) el.parentElement.classList.remove('done');
+    });
+    updateProgress();
+  }
+}
+
+function saveSession() {
+  const date = document.getElementById('ex-date').value;
+  const data = {
+    walk: document.getElementById('ex-walk-val').value,
+    sumo: document.getElementById('ex-sumo-val').value,
+    wallsit: document.getElementById('ex-wallsit-val').value,
+    ankle: document.getElementById('ex-ankle-val').value,
+    plank: document.getElementById('ex-plank-val').value,
+    dips: document.getElementById('ex-dips-val').value,
+    push: document.getElementById('ex-push-val').value,
+    lat: document.getElementById('ex-lat-val').value,
+    atw: document.getElementById('ex-atw-val').value,
+    tri: document.getElementById('ex-tri-val').value,
+    curl: document.getElementById('ex-curl-val').value,
+    date: date
+  };
+  
+  const history = document.getElementById('session-history');
+  if (history.querySelector('.empty-state')) history.innerHTML = '';
+  
+  const item = document.createElement('div');
+  item.className = 'log-item';
+  item.innerHTML = `<div class="log-item-content"><strong>${date || 'Today'}:</strong> Walk ${data.walk}mi · Sumo ${data.sumo} · Wall Sit ${data.wallsit}s · Ankle ${data.ankle}s · Plank ${data.plank}s · Dips ${data.dips} · Push ${data.push} · Lat ${data.lat} · ATW ${data.atw} · Tri ${data.tri} · Curl ${data.curl}</div></div>`;
+  history.appendChild(item);
+  
+  clearSession();
+}
+
+function clearSession() {
+  document.getElementById('ex-date').value = '';
+  document.getElementById('ex-walk-val').value = '';
+  document.getElementById('ex-sumo-val').value = '';
+  document.getElementById('ex-wallsit-val').value = '';
+  document.getElementById('ex-ankle-val').value = '';
+  document.getElementById('ex-plank-val').value = '';
+  document.getElementById('ex-dips-val').value = '';
+  document.getElementById('ex-push-val').value = '';
+  document.getElementById('ex-lat-val').value = '';
+  document.getElementById('ex-atw-val').value = '';
+  document.getElementById('ex-tri-val').value = '';
+  document.getElementById('ex-curl-val').value = '';
+  updateProgress();
+}
+
+function resetPriorities() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('priority-1').value = '';
+  document.getElementById('priority-2').value = '';
+  document.getElementById('priority-3').value = '';
+  localStorage.setItem('priorities-date', today);
+}
+
+function checkDailyPriorityReset() {
+  const today = new Date().toISOString().split('T')[0];
+  const lastDate = localStorage.getItem('priorities-date');
+  if (lastDate !== today) {
+    resetPriorities();
+  } else {
+    const p1 = localStorage.getItem('priority-1');
+    const p2 = localStorage.getItem('priority-2');
+    const p3 = localStorage.getItem('priority-3');
+    if (p1) document.getElementById('priority-1').value = p1;
+    if (p2) document.getElementById('priority-2').value = p2;
+    if (p3) document.getElementById('priority-3').value = p3;
+  }
+}
+
+  // ═══════════════════════════════════════════════════════
+  // SUPABASE SYNC FOR ACCOUNTABILITY PLANNER
+  // ═══════════════════════════════════════════════════════
+  
+  const SUPABASE_URL = 'https://shnmgtjpomklijzzycww.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNobm1ndGpwb21rbGlqenp5Y3d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MjU5NDcsImV4cCI6MjA4ODUwMTk0N30.47WmhmJeBa1VHYMst3-NrD1zM1hJypm1cMwX4rgTCQY';
+  
+  let supabase = null;
+  const userId = localStorage.getItem('user_id') || `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  if (!localStorage.getItem('user_id')) {
+    localStorage.setItem('user_id', userId);
+  }
+
+  async function initSupabase() {
+    try {
+      const { createClient } = window.supabase;
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
+      // Ensure tables exist
+      await createAccountabilityTable();
+      
+      // Load data from Supabase on app start
+      await loadAccountabilityData();
+      
+      console.log('✅ Supabase synced');
+    } catch (error) {
+      console.error('❌ Supabase init error:', error);
+    }
+  }
+
+  async function createAccountabilityTable() {
+    try {
+      // Check if table exists by trying to query it
+      const { data, error } = await supabase
+        .from('accountability')
+        .select('id')
+        .limit(1);
+      
+      if (error && error.code === 'PGRST116') {
+        // Table doesn't exist, create it via RPC or assume it's already created
+        console.log('Table will be created on first insert');
+      }
+    } catch (error) {
+      console.error('Table check error:', error);
+    }
+  }
+
+  async function loadAccountabilityData() {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      const { data, error } = await supabase
+        .from('accountability')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('date', today)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        const record = data[0];
+        
+        // Load Big Three
+        if (record.big_three) {
+          const priorities = JSON.parse(record.big_three);
+          document.getElementById('priority-1').value = priorities.p1 || '';
+          document.getElementById('priority-2').value = priorities.p2 || '';
+          document.getElementById('priority-3').value = priorities.p3 || '';
+        }
+        
+        // Load time blocks
+        if (record.time_blocks) {
+          const blocks = JSON.parse(record.time_blocks);
+          Object.entries(blocks).forEach(([blockId, tasks]) => {
+            const container = document.querySelector(`[data-block="${blockId}"]`);
+            if (container) {
+              container.innerHTML = '';
+              tasks.forEach(task => {
+                const taskEl = document.createElement('div');
+                taskEl.className = 'task-item';
+                taskEl.innerHTML = `
+                  <input type="text" class="task-time" placeholder="--:--" value="${task.time || ''}" />
+                  <input type="checkbox" data-type="task" ${task.completed ? 'checked' : ''} />
+                  <input type="text" placeholder="Add task..." value="${task.text || ''}" />
+                `;
+                container.appendChild(taskEl);
+              });
+            }
+          });
+        }
+        
+        // Load heatmap
+        if (record.heatmap) {
+          const heatmap = JSON.parse(record.heatmap);
+          Object.entries(heatmap).forEach(([key, value]) => {
+            localStorage.setItem(key, value);
+          });
+        }
+        
+        console.log('✅ Data loaded from Supabase');
+      }
+    } catch (error) {
+      console.error('Load error:', error);
+    }
+  }
+
+  async function saveAccountabilityData() {
+    if (!supabase) {
+      console.error('❌ Supabase not initialized');
+      return;
+    }
+    
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Collect Big Three
+      const bigThree = {
+        p1: document.getElementById('priority-1')?.value || '',
+        p2: document.getElementById('priority-2')?.value || '',
+        p3: document.getElementById('priority-3')?.value || '',
+      };
+      
+      // Collect time blocks
+      const timeBlocks = {};
+      ['morning', 'midday', 'afternoon', 'evening'].forEach(blockId => {
+        const container = document.querySelector(`[data-block="${blockId}"]`);
+        if (container) {
+          timeBlocks[blockId] = Array.from(container.querySelectorAll('.task-item')).map(item => ({
+            time: item.querySelector('.task-time')?.value || '',
+            text: item.querySelector('input[type="text"]:last-of-type')?.value || '',
+            completed: item.querySelector('input[type="checkbox"]')?.checked || false,
+          }));
+        }
+      });
+      
+      // Collect heatmap (all acct_* keys from localStorage)
+      const heatmap = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('acct_')) {
+          heatmap[key] = localStorage.getItem(key);
+        }
+      }
+      
+      console.log('📤 Saving to Supabase...', { userId, date: today, bigThree });
+      
+      // Check if record exists for today
+      const { data: existing, error: checkError } = await supabase
+        .from('accountability')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('date', today)
+        .limit(1);
+      
+      if (checkError) throw checkError;
+      
+      if (existing && existing.length > 0) {
+        // Update existing record
+        const { data, error } = await supabase
+          .from('accountability')
+          .update({
+            big_three: JSON.stringify(bigThree),
+            time_blocks: JSON.stringify(timeBlocks),
+            heatmap: JSON.stringify(heatmap),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', userId)
+          .eq('date', today);
+        
+        if (error) throw error;
+        console.log('✅ Data updated in Supabase');
+      } else {
+        // Insert new record
+        const { data, error } = await supabase
+          .from('accountability')
+          .insert([{
+            user_id: userId,
+            date: today,
+            big_three: JSON.stringify(bigThree),
+            time_blocks: JSON.stringify(timeBlocks),
+            heatmap: JSON.stringify(heatmap),
+            updated_at: new Date().toISOString(),
+          }]);
+        
+        if (error) throw error;
+        console.log('✅ Data saved to Supabase', data);
+      }
+    } catch (error) {
+      console.error('❌ Save error:', error);
+      console.log('⚠️ Offline mode: data saved locally, will sync when online');
+    }
+  }
+
+  // Auto-save when tab closes or user navigates away
+  window.addEventListener('beforeunload', saveAccountabilityData);
+  
+  // Save on input change (debounced)
+  let saveTimeout;
+  document.addEventListener('input', (e) => {
+    if (document.getElementById('tab-accountability')?.classList.contains('active')) {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        console.log('💾 Auto-saving...');
+        saveAccountabilityData();
+      }, 1000); // Save 1 second after user stops typing
+    }
+  });
+
+  // Save on checkbox change (immediate)
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('input[type="checkbox"]') && document.getElementById('tab-accountability')?.classList.contains('active')) {
+      console.log('💾 Saving checkbox...');
+      saveAccountabilityData();
+    }
+  });
+
+  // Initialize Supabase on page load
+  document.addEventListener('DOMContentLoaded', initSupabase);
+
+document.querySelectorAll('.priority-input').forEach(input => {
+  input.addEventListener('blur', () => {
+    const id = input.id;
+    localStorage.setItem(id, input.value);
+  });
+  input.addEventListener('input', () => {
+    const id = input.id;
+    localStorage.setItem(id, input.value);
+  });
+});
+
+// ═══════════════════ ACCOUNTABILITY PLANNER FUNCTIONS ═══════════════════
+
+let unlockedEmojis = [];
+const emojiSet = ['✨', '🌟', '💫', '🎯', '🚀', '💪', '🏆', '😎', '🔥', '⭐'];
+
+function setupAccountabilityListeners() {
+  // Task checkboxes
+  const taskCheckboxes = document.querySelectorAll('#tab-accountability input[type="checkbox"]');
+  taskCheckboxes.forEach(cb => {
+    cb.removeEventListener('change', handleTaskCheck);
+    cb.addEventListener('change', handleTaskCheck);
+  });
+
+  // Win input
+  const winInput = document.getElementById('today-win');
+  if (winInput) {
+    winInput.removeEventListener('input', updateEmojiDisplay);
+    winInput.addEventListener('input', updateEmojiDisplay);
+  }
+}
+
+function handleTaskCheck(e) {
+  const checkbox = e.target;
+  if (checkbox.checked) {
+    unlockEmoji();
+  }
+}
+
+function unlockEmoji() {
+  if (unlockedEmojis.length < emojiSet.length) {
+    unlockedEmojis.push(emojiSet[unlockedEmojis.length]);
+    updateEmojiDisplay();
+  }
+}
+
+function updateEmojiDisplay() {
+  const display = document.getElementById('emoji-display');
+  if (display) {
+    display.innerHTML = unlockedEmojis.map(e => `<span style="animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);">${e}</span>`).join('');
+  }
+}
+
+function setEnergy(level) {
+  const buttons = {
+    'low': document.getElementById('energy-low'),
+    'med': document.getElementById('energy-med'),
+    'high': document.getElementById('energy-high')
+  };
+  
+  Object.values(buttons).forEach(b => {
+    if (b) b.style.background = 'var(--surface2)';
+    if (b) b.style.color = 'var(--soft)';
+  });
+  
+  if (buttons[level]) {
+    buttons[level].style.background = 'var(--accent)';
+    buttons[level].style.color = '#000';
+  }
+}
+
+function addBlockTask(block) {
+  const container = document.getElementById(block + '-tasks');
+  const newTask = document.createElement('div');
+  newTask.style.display = 'flex';
+  newTask.style.gap = '8px';
+  newTask.innerHTML = `
+    <input type="text" class="block-time" placeholder="--:--" style="width: 50px; background: var(--surface2); border: 1px solid var(--border); padding: 6px; border-radius: 4px; color: var(--text); font-size: 12px;" />
+    <input type="checkbox" style="accent-color: var(--accent);" onchange="handleTaskCheck(event)" />
+    <input type="text" class="block-task" placeholder="Add task..." style="flex: 1; background: var(--surface2); border: 1px solid var(--border); padding: 6px; border-radius: 4px; color: var(--text); font-size: 12px;" />
+  `;
+  container.appendChild(newTask);
+  newTask.querySelector('.block-task').focus();
+}
+
+function addParking() {
+  const list = document.getElementById('parking-list');
+  const newItem = document.createElement('div');
+  newItem.style.display = 'flex';
+  newItem.style.gap = '8px';
+  newItem.style.alignItems = 'center';
+  newItem.innerHTML = `
+    <span style="color: var(--accent); font-weight: bold;">•</span>
+    <input type="text" class="parking-item" placeholder="Distraction or idea..." style="flex: 1; background: var(--surface2); border: 1px solid var(--border); padding: 6px; border-radius: 4px; color: var(--text); font-size: 12px;" />
+  `;
+  list.appendChild(newItem);
+  newItem.querySelector('input').focus();
+}
+
+function resetAcctSection() {
+  if (confirm('Reset Accountability Planner?')) {
+    document.getElementById('brain-dump').value = '';
+    document.getElementById('acct-p1').value = '';
+    document.getElementById('acct-p2').value = '';
+    document.getElementById('acct-p3').value = '';
+    document.querySelectorAll('#tab-accountability input[type="checkbox"]').forEach(cb => cb.checked = false);
+    unlockedEmojis = [];
+    document.getElementById('emoji-display').innerHTML = '';
+    document.getElementById('today-win').value = '';
+  }
+}
+
+// Attach emoji unlock animation styles
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes popIn {
+    0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+`;
+document.head.appendChild(style);
+
+// Initialize on tab switch
+const originalShowTab = window.showTab;
+window.showTab = function(e, tabName) {
+  originalShowTab(e, tabName);
+  if (tabName === 'accountability') {
+    setTimeout(() => setupAccountabilityListeners(), 100);
+  }
+};
+
+updateProgress();
+checkDailyPriorityReset();
+</script>
+
+</body>
+</html>
